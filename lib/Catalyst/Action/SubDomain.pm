@@ -3,7 +3,7 @@ package Catalyst::Action::SubDomain;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use MRO::Compat;
 use base 'Catalyst::Action';
@@ -52,7 +52,7 @@ Catalyst::Action::SubDomain - Match action against sub-domains
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 
