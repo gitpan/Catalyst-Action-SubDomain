@@ -3,7 +3,7 @@ package Catalyst::Action::SubDomain;
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use MRO::Compat;
 use base 'Catalyst::Action';
