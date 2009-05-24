@@ -1,7 +1,9 @@
 package Catalyst::Action::SubDomain;
 
-use warnings;
 use strict;
+use warnings;
+
+our $VERSION = '0.01';
 
 use MRO::Compat;
 use base 'Catalyst::Action';
