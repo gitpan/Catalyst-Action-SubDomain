@@ -3,7 +3,7 @@ package Catalyst::Action::SubDomain;
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use MRO::Compat;
 use base 'Catalyst::Action';
@@ -15,11 +15,11 @@ sub match {
 
 sub check_subdomain_constraints {
     my ( $self, $host ) = @_;
-    my @domains = reverse split(/\./, $host);
     return !! scalar @{$self->_cached_domains->{$host}} if exists $self->_cached_domains->{$host};
+    my @domains = reverse split(/\./, $host);
     $self->_cached_domains->{$host} = \@domains;
     return 1 unless exists $self->attributes->{SubDomain};
-    foreach my $cnf (grep {$_->[0]=~/^\d+$/} map([split(/,/, $_, 2)],  @{$self->attributes->{SubDomain}})) {
+    foreach my $cnf (grep { scalar(@domains) >= $_->[0] && $_->[0]=~/^\d+$/ } map([split(/,/, $_, 2)],  @{$self->attributes->{SubDomain}})) {
         if ($domains[$cnf->[0] - 1] !~ qr#$cnf->[1]#) {
             $self->_cached_domains->{$host} = [];
             return undef;
@@ -48,11 +48,11 @@ sub _cached_domains {
 
 =head1 NAME
 
-Catalyst::Action::SubDomain - Match action against sub-domains
+Catalyst::Action::SubDomain - Match action against names of subdomains
 
 =head1 VERSION
 
-Version 0.02
+Version 0.04
 
 =head1 SYNOPSIS
 
@@ -70,6 +70,8 @@ Get number of domain levels and subdomain name at last level.
         my $max_level = $c->action->number_of_domains($c);
         my $subdomain = $c->action->domain($c, $max_level);
     }
+    
+=head1 EXAMPLES
 
 This example shows that actions will be match only when 3-rd level domain exists and contains alpha-numerical chars (foo123.example.com).
 
@@ -87,7 +89,7 @@ foo123.example.com/test
     
 You can specify more that one subdomain constraint.
 
-    sub test :Path('/test') :ActionClass('SubDomain') :SubDomain('3,^\w+$') :SubDomain('2,^example$') {
+    sub test :Local :ActionClass('SubDomain') :SubDomain('3,^\w+$') :SubDomain('2,^example$') {
         my ( $self, $c, @args ) = @_;
         my $name = $self->action->domain($c, 3);
     }
