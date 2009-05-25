@@ -3,7 +3,7 @@ package Catalyst::Action::SubDomain;
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use MRO::Compat;
 use base 'Catalyst::Action';
@@ -19,8 +19,8 @@ sub check_subdomain_constraints {
     my @domains = reverse split(/\./, $host);
     $self->_cached_domains->{$host} = \@domains;
     return 1 unless exists $self->attributes->{SubDomain};
-    foreach my $cnf (grep { scalar(@domains) >= $_->[0] && $_->[0]=~/^\d+$/ } map([split(/,/, $_, 2)],  @{$self->attributes->{SubDomain}})) {
-        if ($domains[$cnf->[0] - 1] !~ qr#$cnf->[1]#) {
+    foreach my $cnf (grep { $_->[0]=~/^\d+$/ } map([split(/,/, $_, 2)],  @{$self->attributes->{SubDomain}})) {
+        if ((scalar(@domains) >= $cnf->[0]?$domains[$cnf->[0] - 1]:'') !~ qr#$cnf->[1]#) {
             $self->_cached_domains->{$host} = [];
             return undef;
         }
@@ -52,7 +52,7 @@ Catalyst::Action::SubDomain - Match action against names of subdomains
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =head1 SYNOPSIS
 
@@ -73,6 +73,18 @@ Get number of domain levels and subdomain name at last level.
     
 =head1 EXAMPLES
 
+Root controller action for main site and subdomain with no more than 3 chars
+
+    sub default :Path('/') : ActionClass('SubDomain') : SubDomain('3,^\w{0,3}$') {
+        my ( $self, $c ) = @_;
+    }
+    
+Foo controller action for rest subdomains
+
+    sub index :Path('/') :ActionClass('SubDomain') :SubDomain('3,^\w{4,}$') {
+        my ( $self, $c ) = @_;
+    }
+    
 This example shows that actions will be match only when 3-rd level domain exists and contains alpha-numerical chars (foo123.example.com).
 
     sub index :Path('/') :Args(0) :ActionClass('SubDomain') :SubDomain('3,^\w+$') {
