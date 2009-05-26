@@ -6,6 +6,8 @@ author   'Egor Korablev <egor.korablev@gmail.com>';
 license  'perl';
 
 build_requires 'Test::More';
+requires 'Catalyst::Runtime' => '5.70';
+requires 'MRO::Compat';
 
 auto_install;
 

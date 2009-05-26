@@ -1,5 +1,8 @@
 Revision history for Catalyst::Action::SubDomain
 
+0.06  2009-05-25 02:32:00
+    - Test fix
+
 0.05  2009-05-25 02:32:00
     - Bug fix
 
