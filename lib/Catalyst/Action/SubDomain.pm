@@ -3,7 +3,7 @@ package Catalyst::Action::SubDomain;
 use strict;
 use warnings;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use MRO::Compat;
 use base 'Catalyst::Action';
@@ -52,7 +52,7 @@ Catalyst::Action::SubDomain - Match action against names of subdomains
 
 =head1 VERSION
 
-Version 0.05
+Version 0.07
 
 =head1 SYNOPSIS
 
@@ -105,6 +105,13 @@ You can specify more that one subdomain constraint.
         my ( $self, $c, @args ) = @_;
         my $name = $self->action->domain($c, 3);
     }
+    
+Note: When combining :ActionClass('SubDomain') with :Chained action you should access action a little bit different way
+    
+    ..
+    my $action = $c->action->isa('Catalyst::ActionChain')?$c->action->chain->[-1]:$c->action;
+    my $name = $action->domain($c, 3);
+    ..
     
 =head1 METHODS
 
